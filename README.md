@@ -17,9 +17,8 @@ Live examples
 
 See OL3-Pan-Zoom in actions:
 
- * [PanZoom](http://labs.mapgears.com/ol3-panzoom/examples/maxextent.html)
- * [PanZoomBar](http://labs.mapgears.com/ol3-panzoom/examples/slider.html)
- * [PanZoomBar in black](http://labs.mapgears.com/ol3-panzoom/examples/black-slider.html)
+ * [Zoom](https://rawgit.com/ca0v/ol3-panzoom/master/examples/rawgit.html?run=./simple)
+ * [PanZoom](https://rawgit.com/ca0v/ol3-panzoom/master/examples/rawgit.html?run=./maxextent)
+ * [PanZoomBar](https://rawgit.com/ca0v/ol3-panzoom/master/examples/rawgit.html?run=./slider)
+ * [PanZoomBar in black](https://rawgit.com/ca0v/ol3-panzoom/master/examples/rawgit.html?run=./black-slider)
 
-See all other example at:
-http://labs.mapgears.com/ol3-panzoom/examples/
