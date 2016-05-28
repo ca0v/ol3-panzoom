@@ -183,7 +183,7 @@ class PanZoom extends ol.control.Control {
 
     var currentMap = this.getMap();
     if (currentMap && currentMap instanceof ol.Map) {
-      keys.forEach(this.unByKey);
+      keys.forEach(k => k());
       keys.length = 0;
       if (this.zoomSliderCtrl_) {
         this.zoomSliderCtrl_.setTarget(null);

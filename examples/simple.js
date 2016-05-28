@@ -1,4 +1,4 @@
-define(["require", "exports", "../src/ol3panzoom"], function (require, exports, PanZoom) {
+define(["require", "exports", "openlayers", "../src/ol3panzoom"], function (require, exports, ol, PanZoom) {
     "use strict";
     // In OpenLayers 2, the OpenLayers.ImgPath was used to define a directory where
     // native controls fetched their images. The same idea is borrowed here in

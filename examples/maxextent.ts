@@ -1,3 +1,4 @@
+import ol = require("openlayers");
 import PanZoom = require("../src/ol3panzoom");
 
 // Define a `maxExtent` to include the "zoom to max extent" button

@@ -1,3 +1,4 @@
+import ol = require("openlayers");
 import PanZoom = require("../src/ol3panzoom");
 
 var panZoom = new PanZoom({

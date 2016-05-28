@@ -1,3 +1,4 @@
+import ol = require("openlayers");
 import PanZoom = require("../src/ol3panzoom");
 
 // Note that the view and control must share the same min/max zoom

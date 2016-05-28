@@ -9,7 +9,7 @@ import ol = require("openlayers");
 class ZoomSlider extends ol.control.ZoomSlider {
   private element: HTMLElement;
 
-  constructor(opt_options) {
+  constructor(opt_options?) {
     super(opt_options);
   }
 

@@ -1,3 +1,4 @@
+import ol = require("openlayers");
 import PanZoom = require("../src/ol3panzoom");
 
 // In OpenLayers 2, the OpenLayers.ImgPath was used to define a directory where

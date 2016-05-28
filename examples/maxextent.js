@@ -1,4 +1,4 @@
-define(["require", "exports", "../src/ol3panzoom"], function (require, exports, PanZoom) {
+define(["require", "exports", "openlayers", "../src/ol3panzoom"], function (require, exports, ol, PanZoom) {
     "use strict";
     // Define a `maxExtent` to include the "zoom to max extent" button
     var panZoom = new PanZoom({

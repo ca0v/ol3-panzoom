@@ -1,4 +1,4 @@
-define(["require", "exports", "../src/ol3panzoom"], function (require, exports, PanZoom) {
+define(["require", "exports", "openlayers", "../src/ol3panzoom"], function (require, exports, ol, PanZoom) {
     "use strict";
     // Note that the view and control must share the same min/max zoom
     var minZoom = 6;
