@@ -1,7 +1,9 @@
-var panZoom = new olpz.control.PanZoom({
-  className: 'olControlPanZoomBar', // define a different css class
+import PanZoom = require("../src/ol3panzoom");
+import ol = require("openlayers");
+
+var panZoom = new PanZoom({
   imgPath: './resources/ol2img',
-  slider: true
+  slider: true // enables the slider
 });
 
 var map = new ol.Map({
@@ -18,6 +20,8 @@ var map = new ol.Map({
   target: 'map',
   view: new ol.View({
     center:[-7910321, 6179398],
+    // the control default min/max zoom are 0/19. It's important to match
+    // those in the view as well
     minZoom: 0,
     maxZoom: 19,
     zoom: 12

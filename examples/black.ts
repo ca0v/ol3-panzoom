@@ -1,5 +1,8 @@
-var panZoom = new olpz.control.PanZoom({
-  imgPath: './resources/ol2img'
+import PanZoom = require("../src/ol3panzoom");
+
+var panZoom = new PanZoom({
+  imgPath: './resources/zoombar_black',
+  maxExtent: [813079, 5929220, 848966, 5936863]
 });
 
 var map = new ol.Map({
