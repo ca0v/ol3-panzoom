@@ -1,18 +1,37 @@
 import ol = require("openlayers");
 import ZoomSlider = require("./zoomslidercontrol");
 
+/**
+ * extends the base object without replacing defined attributes
+ */
+function defaults<A, B>(a: A, ...b: B[]): A & B {
+  b.forEach(b => {
+    Object.keys(b).filter(k => a[k] === undefined).forEach(k => a[k] = b[k]);
+  });
+  return <A & B>a;
+}
+
 function on(element: HTMLElement, event: string, listener: (event?: UIEvent) => any) {
   element.addEventListener(event, listener);
   return () => element.removeEventListener(event, listener);
 }
 
-/**
- * @constructor
- * @param {olpzx.control.PanZoomOptions=} opt_options Options.
- * @extends {ol.control.Control}
- * @api
- */
-class PanZoom extends ol.control.Control {
+export interface IPanZoomOptions extends olx.control.ControlOptions {
+  className?: string;
+  imgPath?: string;
+  duration?: number;
+  maxExtent?: ol.Extent;
+  minZoom?: number;
+  maxZoom?: number;
+  pixelDelta?: number;
+  slider?: boolean;
+  zoomDelta?: number;
+}
+
+const DEFAULT_OPTIONS: IPanZoomOptions = {
+}
+
+export class PanZoom extends ol.control.Control {
   private className_: string;
   private imgPath_: string;
   private listenerKeys_: Array<Function>;
@@ -34,123 +53,33 @@ class PanZoom extends ol.control.Control {
   private element_: HTMLElement; // masks ancestor?
   private pixelDelta_: number;
 
-  constructor(opt_options) {
+  constructor(options = DEFAULT_OPTIONS) {
 
-    super(opt_options);
-    var options = opt_options || {};
+    options = defaults({}, options, DEFAULT_OPTIONS);
+    super(options);
 
-    /**
-     * @type {?string}
-     * @private
-     */
     this.className_ = options.className ? options.className : 'ol-panzoom';
+    this.imgPath_ = options.imgPath || './ol3-panzoom/resources/ol2img';
 
-    /**
-     * @type {?string}
-     * @private
-     */
-    this.imgPath_ = options.imgPath ? options.imgPath : null;
-
-    var element = this.createEl_();
-    this.element = element;
+    var element = this.element = this.element_ = this.createEl_();
     this.setTarget(options.target);
 
-    /**
-     * @type {Array.<goog.events.Key>}
-     * @private
-     */
     this.listenerKeys_ = [];
 
-    /**
-     * @type {number}
-     * @private
-     */
     this.duration_ = options.duration !== undefined ? options.duration : 100;
-
-    /**
-     * @type {?ol.Extent}
-     * @private
-     */
     this.maxExtent_ = options.maxExtent ? options.maxExtent : null;
-
-    /**
-     * @type {number}
-     * @private
-     */
     this.maxZoom_ = options.maxZoom ? options.maxZoom : 19;
-
-    /**
-     * @type {number}
-     * @private
-     */
     this.minZoom_ = options.minZoom ? options.minZoom : 0;
-
-    /**
-     * @type {number}
-     * @private
-     */
-    this.pixelDelta_ = options.pixelDelta !== undefined ?
-      options.pixelDelta : 128;
-
-    /**
-     * @type {boolean}
-     * @private
-     */
+    this.pixelDelta_ = options.pixelDelta !== undefined ? options.pixelDelta : 128;
     this.slider_ = options.slider !== undefined ? options.slider : false;
-
-    /**
-     * @type {number}
-     * @private
-     */
     this.zoomDelta_ = options.zoomDelta !== undefined ? options.zoomDelta : 1;
-
-    /**
-     * @type {Element}
-     * @private
-     */
     this.panEastEl_ = this.createButtonEl_('pan-east');
-
-    /**
-     * @type {Element}
-     * @private
-     */
     this.panNorthEl_ = this.createButtonEl_('pan-north');
-
-    /**
-     * @type {Element}
-     * @private
-     */
     this.panSouthEl_ = this.createButtonEl_('pan-south');
-
-    /**
-     * @type {Element}
-     * @private
-     */
     this.panWestEl_ = this.createButtonEl_('pan-west');
-
-    /**
-     * @type {Element}
-     * @private
-     */
     this.zoomInEl_ = this.createButtonEl_('zoom-in');
-
-    /**
-     * @type {Element}
-     * @private
-     */
     this.zoomOutEl_ = this.createButtonEl_('zoom-out');
-
-    /**
-     * @type {?Element}
-     * @private
-     */
-    this.zoomMaxEl_ = (!this.slider_ && this.maxExtent_) ?
-      this.createButtonEl_('zoom-max') : null;
-
-    /**
-     * @type {?olpz.control.ZoomSlider}
-     * @private
-     */
+    this.zoomMaxEl_ = (!this.slider_ && this.maxExtent_) ? this.createButtonEl_('zoom-max') : null;
     this.zoomSliderCtrl_ = (this.slider_) ? new ZoomSlider() : null;
 
     element.appendChild(this.panNorthEl_);
@@ -159,15 +88,10 @@ class PanZoom extends ol.control.Control {
     element.appendChild(this.panSouthEl_);
     element.appendChild(this.zoomInEl_);
     element.appendChild(this.zoomOutEl_);
+
     if (this.zoomMaxEl_) {
       element.appendChild(this.zoomMaxEl_);
     }
-
-    /**
-     * @type {Element}
-     * @private
-     */
-    this.element_ = element;
 
   }
 
@@ -207,7 +131,7 @@ class PanZoom extends ol.control.Control {
       if (this.maxExtent_ && !this.slider_) {
         keys.push(on(this.zoomMaxEl_, "click", evt => this.zoom_('max', evt)));
       }
-      
+
       if (this.slider_) {
         zoomSlider.setTarget(this.element_);
         window.setTimeout(function () {
@@ -219,11 +143,7 @@ class PanZoom extends ol.control.Control {
   }
 
 
-  /**
-   * @return {Element}
-   * @private
-   */
-  createEl_() {
+  private createEl_() {
     var path = this.imgPath_;
     var className = this.className_;
     var cssClasses = [
@@ -247,13 +167,7 @@ class PanZoom extends ol.control.Control {
     return element;
   }
 
-
-  /**
-   * @param {string} action
-   * @return {Element}
-   * @private
-   */
-  createButtonEl_(action) {
+  private createButtonEl_(action) {
     var divEl = document.createElement('div');
     var path = this.imgPath_;
     var maxExtent = this.maxExtent_;
@@ -334,19 +248,13 @@ class PanZoom extends ol.control.Control {
   }
 
 
-  /**
-   * @param {string} direction
-   * @param {goog.events.BrowserEvent} evt
-   * @return {boolean}
-   * @private
-   */
-  pan_(direction, evt) {
+  private pan_(direction: "south" | "west" | "east" | "north", evt) {
     var stopEvent = false;
 
     var map = this.getMap();
-    console.assert(map, 'map must be set');
+    console.assert(!!map, 'map must be set');
     var view = map.getView();
-    console.assert(view, 'map must have view');
+    console.assert(!!view, 'map must have view');
     var mapUnitsDelta = view.getResolution() * this.pixelDelta_;
     var deltaX = 0, deltaY = 0;
     if (direction == 'south') {
@@ -358,7 +266,7 @@ class PanZoom extends ol.control.Control {
     } else {
       deltaY = mapUnitsDelta;
     }
-    var delta = [deltaX, deltaY];
+    var delta = <[number, number]>[deltaX, deltaY];
     ol.coordinate.rotate(delta, view.getRotation());
 
     // pan
@@ -383,12 +291,7 @@ class PanZoom extends ol.control.Control {
   }
 
 
-  /**
-   * @param {string} direction
-   * @param {goog.events.BrowserEvent} evt
-   * @private
-   */
-  zoom_(direction, evt) {
+  private zoom_(direction: "in" | "out" | "max", evt) {
     if (direction === 'in') {
       this.zoomByDelta_(this.zoomDelta_);
     } else if (direction === 'out') {
@@ -399,17 +302,12 @@ class PanZoom extends ol.control.Control {
       var extent = !this.maxExtent_ ?
         view.getProjection().getExtent() : this.maxExtent_;
       var size = map.getSize();
-      console.assert(size, 'size should be defined');
+      console.assert(!!size, 'size should be defined');
       view.fit(extent, size);
     }
   }
 
-
-  /**
-   * @param {number} delta Zoom delta.
-   * @private
-   */
-  zoomByDelta_(delta) {
+  private zoomByDelta_(delta) {
     var map = this.getMap();
     var view = map.getView();
     if (!view) {
@@ -477,5 +375,3 @@ class PanZoom extends ol.control.Control {
   }
 
 }
-
-export = PanZoom;
