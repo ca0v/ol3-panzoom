@@ -3,10 +3,13 @@
         "module": "amd",
         "target": "es5",
         "noImplicitAny": false,
-        "sourceMap": false
+        "sourceMap": true,
+        "declaration": true,
+        "outFile": "./built/index.js"
     },
     "exclude": [
         "node_modules",
-        "bower_components"
+        "bower_components",
+        "built"
     ]
 }

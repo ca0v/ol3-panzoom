@@ -3,132 +3,87 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (require, exports, ol, ZoomSlider) {
+define("ol3-panzoom/zoomslidercontrol", ["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
+    /**
+     * @constructor
+     * @param {olx.control.ZoomSliderOptions=} opt_options Options.
+     * @extends {ol.control.ZoomSlider}
+     * @api
+     */
+    var ZoomSlider = (function (_super) {
+        __extends(ZoomSlider, _super);
+        function ZoomSlider(opt_options) {
+            return _super.call(this, opt_options) || this;
+        }
+        /**
+         * @return {Element}
+         * @api
+         */
+        ZoomSlider.prototype.getElement = function () {
+            return this.element;
+        };
+        return ZoomSlider;
+    }(ol.control.ZoomSlider));
+    return ZoomSlider;
+});
+define("ol3-panzoom/ol3-panzoom", ["require", "exports", "openlayers", "ol3-panzoom/zoomslidercontrol"], function (require, exports, ol, ZoomSlider) {
+    "use strict";
+    /**
+     * extends the base object without replacing defined attributes
+     */
+    function defaults(a) {
+        var b = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            b[_i - 1] = arguments[_i];
+        }
+        b.forEach(function (b) {
+            Object.keys(b).filter(function (k) { return a[k] === undefined; }).forEach(function (k) { return a[k] = b[k]; });
+        });
+        return a;
+    }
     function on(element, event, listener) {
         element.addEventListener(event, listener);
         return function () { return element.removeEventListener(event, listener); };
     }
-    /**
-     * @constructor
-     * @param {olpzx.control.PanZoomOptions=} opt_options Options.
-     * @extends {ol.control.Control}
-     * @api
-     */
+    var DEFAULT_OPTIONS = {};
     var PanZoom = (function (_super) {
         __extends(PanZoom, _super);
-        function PanZoom(opt_options) {
-            _super.call(this, opt_options);
-            var options = opt_options || {};
-            /**
-             * @type {?string}
-             * @private
-             */
-            this.className_ = options.className ? options.className : 'ol-panzoom';
-            /**
-             * @type {?string}
-             * @private
-             */
-            this.imgPath_ = options.imgPath ? options.imgPath : null;
-            var element = this.createEl_();
-            this.element = element;
-            this.setTarget(options.target);
-            /**
-             * @type {Array.<goog.events.Key>}
-             * @private
-             */
-            this.listenerKeys_ = [];
-            /**
-             * @type {number}
-             * @private
-             */
-            this.duration_ = options.duration !== undefined ? options.duration : 100;
-            /**
-             * @type {?ol.Extent}
-             * @private
-             */
-            this.maxExtent_ = options.maxExtent ? options.maxExtent : null;
-            /**
-             * @type {number}
-             * @private
-             */
-            this.maxZoom_ = options.maxZoom ? options.maxZoom : 19;
-            /**
-             * @type {number}
-             * @private
-             */
-            this.minZoom_ = options.minZoom ? options.minZoom : 0;
-            /**
-             * @type {number}
-             * @private
-             */
-            this.pixelDelta_ = options.pixelDelta !== undefined ?
-                options.pixelDelta : 128;
-            /**
-             * @type {boolean}
-             * @private
-             */
-            this.slider_ = options.slider !== undefined ? options.slider : false;
-            /**
-             * @type {number}
-             * @private
-             */
-            this.zoomDelta_ = options.zoomDelta !== undefined ? options.zoomDelta : 1;
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.panEastEl_ = this.createButtonEl_('pan-east');
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.panNorthEl_ = this.createButtonEl_('pan-north');
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.panSouthEl_ = this.createButtonEl_('pan-south');
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.panWestEl_ = this.createButtonEl_('pan-west');
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.zoomInEl_ = this.createButtonEl_('zoom-in');
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.zoomOutEl_ = this.createButtonEl_('zoom-out');
-            /**
-             * @type {?Element}
-             * @private
-             */
-            this.zoomMaxEl_ = (!this.slider_ && this.maxExtent_) ?
-                this.createButtonEl_('zoom-max') : null;
-            /**
-             * @type {?olpz.control.ZoomSlider}
-             * @private
-             */
-            this.zoomSliderCtrl_ = (this.slider_) ? new ZoomSlider() : null;
-            element.appendChild(this.panNorthEl_);
-            element.appendChild(this.panWestEl_);
-            element.appendChild(this.panEastEl_);
-            element.appendChild(this.panSouthEl_);
-            element.appendChild(this.zoomInEl_);
-            element.appendChild(this.zoomOutEl_);
-            if (this.zoomMaxEl_) {
-                element.appendChild(this.zoomMaxEl_);
+        function PanZoom(options) {
+            if (options === void 0) { options = DEFAULT_OPTIONS; }
+            var _this = this;
+            options = defaults({}, options, DEFAULT_OPTIONS);
+            _this = _super.call(this, options) || this;
+            _this.className_ = options.className ? options.className : 'ol-panzoom';
+            _this.imgPath_ = options.imgPath || './ol3-panzoom/resources/ol2img';
+            var element = _this.element = _this.element_ = _this.createEl_();
+            _this.setTarget(options.target);
+            _this.listenerKeys_ = [];
+            _this.duration_ = options.duration !== undefined ? options.duration : 100;
+            _this.maxExtent_ = options.maxExtent ? options.maxExtent : null;
+            _this.maxZoom_ = options.maxZoom ? options.maxZoom : 19;
+            _this.minZoom_ = options.minZoom ? options.minZoom : 0;
+            _this.pixelDelta_ = options.pixelDelta !== undefined ? options.pixelDelta : 128;
+            _this.slider_ = options.slider !== undefined ? options.slider : false;
+            _this.zoomDelta_ = options.zoomDelta !== undefined ? options.zoomDelta : 1;
+            _this.panEastEl_ = _this.createButtonEl_('pan-east');
+            _this.panNorthEl_ = _this.createButtonEl_('pan-north');
+            _this.panSouthEl_ = _this.createButtonEl_('pan-south');
+            _this.panWestEl_ = _this.createButtonEl_('pan-west');
+            _this.zoomInEl_ = _this.createButtonEl_('zoom-in');
+            _this.zoomOutEl_ = _this.createButtonEl_('zoom-out');
+            _this.zoomMaxEl_ = (!_this.slider_ && _this.maxExtent_) ? _this.createButtonEl_('zoom-max') : null;
+            _this.zoomSliderCtrl_ = (_this.slider_) ? new ZoomSlider() : null;
+            element.appendChild(_this.panNorthEl_);
+            element.appendChild(_this.panWestEl_);
+            element.appendChild(_this.panEastEl_);
+            element.appendChild(_this.panSouthEl_);
+            element.appendChild(_this.zoomInEl_);
+            element.appendChild(_this.zoomOutEl_);
+            if (_this.zoomMaxEl_) {
+                element.appendChild(_this.zoomMaxEl_);
             }
-            /**
-             * @type {Element}
-             * @private
-             */
-            this.element_ = element;
+            return _this;
         }
         /**
          * @param {ol.Map} map
@@ -169,10 +124,6 @@ define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (re
                 }
             }
         };
-        /**
-         * @return {Element}
-         * @private
-         */
         PanZoom.prototype.createEl_ = function () {
             var path = this.imgPath_;
             var className = this.className_;
@@ -192,11 +143,6 @@ define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (re
             }
             return element;
         };
-        /**
-         * @param {string} action
-         * @return {Element}
-         * @private
-         */
         PanZoom.prototype.createButtonEl_ = function (action) {
             var divEl = document.createElement('div');
             var path = this.imgPath_;
@@ -274,18 +220,12 @@ define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (re
             }
             return divEl;
         };
-        /**
-         * @param {string} direction
-         * @param {goog.events.BrowserEvent} evt
-         * @return {boolean}
-         * @private
-         */
         PanZoom.prototype.pan_ = function (direction, evt) {
             var stopEvent = false;
             var map = this.getMap();
-            console.assert(map, 'map must be set');
+            console.assert(!!map, 'map must be set');
             var view = map.getView();
-            console.assert(view, 'map must have view');
+            console.assert(!!view, 'map must have view');
             var mapUnitsDelta = view.getResolution() * this.pixelDelta_;
             var deltaX = 0, deltaY = 0;
             if (direction == 'south') {
@@ -319,11 +259,6 @@ define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (re
             stopEvent = true;
             return !stopEvent;
         };
-        /**
-         * @param {string} direction
-         * @param {goog.events.BrowserEvent} evt
-         * @private
-         */
         PanZoom.prototype.zoom_ = function (direction, evt) {
             if (direction === 'in') {
                 this.zoomByDelta_(this.zoomDelta_);
@@ -337,14 +272,10 @@ define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (re
                 var extent = !this.maxExtent_ ?
                     view.getProjection().getExtent() : this.maxExtent_;
                 var size = map.getSize();
-                console.assert(size, 'size should be defined');
+                console.assert(!!size, 'size should be defined');
                 view.fit(extent, size);
             }
         };
-        /**
-         * @param {number} delta Zoom delta.
-         * @private
-         */
         PanZoom.prototype.zoomByDelta_ = function (delta) {
             var map = this.getMap();
             var view = map.getView();
@@ -405,5 +336,171 @@ define(["require", "exports", "openlayers", "./zoomslidercontrol"], function (re
         };
         return PanZoom;
     }(ol.control.Control));
-    return PanZoom;
+    exports.PanZoom = PanZoom;
 });
+define("index", ["require", "exports", "ol3-panzoom/ol3-panzoom"], function (require, exports, Panzoom) {
+    "use strict";
+    return Panzoom;
+});
+define("ol3-panzoom/examples/black-slider", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_1) {
+    "use strict";
+    function run() {
+        // Note that the view and control must share the same min/max zoom
+        var minZoom = 6;
+        var maxZoom = 15;
+        var panZoom = new ol3_panzoom_1.PanZoom({
+            imgPath: './resources/zoombar_black',
+            minZoom: minZoom,
+            maxZoom: maxZoom,
+            slider: true
+        });
+        var map = new ol.Map({
+            controls: ol.control.defaults({
+                zoom: false
+            }).extend([
+                panZoom
+            ]),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: [-7910321, 6179398],
+                minZoom: minZoom,
+                maxZoom: maxZoom,
+                zoom: 12
+            })
+        });
+    }
+    exports.run = run;
+});
+define("ol3-panzoom/examples/black", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_2) {
+    "use strict";
+    function run() {
+        var panZoom = new ol3_panzoom_2.PanZoom({
+            imgPath: './resources/zoombar_black',
+            maxExtent: [813079, 5929220, 848966, 5936863]
+        });
+        var map = new ol.Map({
+            controls: ol.control.defaults({
+                zoom: false
+            }).extend([
+                panZoom
+            ]),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: ol.proj.transform([-70, 50], 'EPSG:4326', 'EPSG:3857'),
+                zoom: 5
+            })
+        });
+    }
+    exports.run = run;
+});
+define("ol3-panzoom/examples/index", ["require", "exports"], function (require, exports) {
+    "use strict";
+    function run() {
+        var l = window.location;
+        var path = "" + l.origin + l.pathname + "?run=ol3-panzoom/examples/";
+        var labs = "\n    black\n    black-slider\n    maxextent\n    simple\n    slider\n    index\n    ";
+        document.writeln("\n    <p>\n    Watch the console output for failed assertions (blank is good).\n    </p>\n    ");
+        document.writeln(labs
+            .split(/ /)
+            .map(function (v) { return v.trim(); })
+            .filter(function (v) { return !!v; })
+            .sort()
+            .map(function (lab) { return "<a href=\"" + path + lab + "&debug=1\">" + lab + "</a>"; })
+            .join("<br/>"));
+    }
+    exports.run = run;
+    ;
+});
+define("ol3-panzoom/examples/maxextent", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_3) {
+    "use strict";
+    function run() {
+        // Define a `maxExtent` to include the "zoom to max extent" button
+        var panZoom = new ol3_panzoom_3.PanZoom({
+            maxExtent: [813079, 5929220, 848966, 5936863]
+        });
+        var map = new ol.Map({
+            controls: ol.control.defaults({
+                zoom: false
+            }).extend([
+                panZoom
+            ]),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: ol.proj.transform([-70, 50], 'EPSG:4326', 'EPSG:3857'),
+                zoom: 5
+            })
+        });
+    }
+    exports.run = run;
+});
+define("ol3-panzoom/examples/simple", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_4) {
+    "use strict";
+    function run() {
+        var panZoom = new ol3_panzoom_4.PanZoom();
+        var map = new ol.Map({
+            // replace the default `ol.control.Zoom` control by the `olpz.control.PanZoom`
+            controls: ol.control.defaults({
+                zoom: false
+            }).extend([
+                panZoom
+            ]),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: ol.proj.transform([-70, 50], 'EPSG:4326', 'EPSG:3857'),
+                zoom: 5
+            })
+        });
+    }
+    exports.run = run;
+});
+define("ol3-panzoom/examples/slider", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_5) {
+    "use strict";
+    function run() {
+        var panZoom = new ol3_panzoom_5.PanZoom({
+            slider: true // enables the slider
+        });
+        var map = new ol.Map({
+            controls: ol.control.defaults({
+                zoom: false
+            }).extend([
+                panZoom
+            ]),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: [-7910321, 6179398],
+                // the control default min/max zoom are 0/19. It's important to match
+                // those in the view as well
+                minZoom: 0,
+                maxZoom: 19,
+                zoom: 12
+            })
+        });
+    }
+    exports.run = run;
+});
+//# sourceMappingURL=index.js.map

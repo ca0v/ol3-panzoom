@@ -1,7 +1,10 @@
 {
   "name": "ol3-panzoom",
   "description": "OpenLayers 3 Google Maps integration library",
-  "main": "",
+  "main": [
+    "./built/index.js",
+    "./index.ts"
+  ],
   "authors": [
     "coreyalix <coreyalix@hotmail.com>"
   ],
@@ -11,11 +14,14 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "typings",
+    "ol3-panzoom/examples/**",
+    "*.html",
+    "*.md",
+    "*.yml"
   ],
   "dependencies": {
-    "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.15.1/v3.15.1-dist.zip",
-    "requirejs": "^2.2.0"
+    "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.20.1/v3.20.1-dist.zip",
+    "requirejs": "^2.3.2"
   }
 }
