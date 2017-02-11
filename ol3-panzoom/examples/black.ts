@@ -3,7 +3,7 @@ import { PanZoom } from "../ol3-panzoom";
 
 export function run() {
   var panZoom = new PanZoom({
-    imgPath: './resources/zoombar_black',
+    imgPath: './ol3-panzoom/resources/zoombar_black',
     maxExtent: [813079, 5929220, 848966, 5936863]
   });
 

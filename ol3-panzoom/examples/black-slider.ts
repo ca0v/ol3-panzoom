@@ -7,7 +7,7 @@ export function run() {
   var maxZoom = 15;
 
   var panZoom = new PanZoom({
-    imgPath: './resources/zoombar_black',
+    imgPath: './ol3-panzoom/resources/zoombar_black',
     minZoom: minZoom,
     maxZoom: maxZoom,
     slider: true

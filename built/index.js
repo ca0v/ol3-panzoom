@@ -349,7 +349,7 @@ define("ol3-panzoom/examples/black-slider", ["require", "exports", "openlayers",
         var minZoom = 6;
         var maxZoom = 15;
         var panZoom = new ol3_panzoom_1.PanZoom({
-            imgPath: './resources/zoombar_black',
+            imgPath: './ol3-panzoom/resources/zoombar_black',
             minZoom: minZoom,
             maxZoom: maxZoom,
             slider: true
@@ -380,7 +380,7 @@ define("ol3-panzoom/examples/black", ["require", "exports", "openlayers", "ol3-p
     "use strict";
     function run() {
         var panZoom = new ol3_panzoom_2.PanZoom({
-            imgPath: './resources/zoombar_black',
+            imgPath: './ol3-panzoom/resources/zoombar_black',
             maxExtent: [813079, 5929220, 848966, 5936863]
         });
         var map = new ol.Map({
@@ -408,7 +408,7 @@ define("ol3-panzoom/examples/index", ["require", "exports"], function (require, 
     function run() {
         var l = window.location;
         var path = "" + l.origin + l.pathname + "?run=ol3-panzoom/examples/";
-        var labs = "\n    black\n    black-slider\n    maxextent\n    simple\n    slider\n    index\n    ";
+        var labs = "\n    black\n    black-slider\n    maxextent\n    simple\n    slider\n    ";
         document.writeln("\n    <p>\n    Watch the console output for failed assertions (blank is good).\n    </p>\n    ");
         document.writeln(labs
             .split(/ /)

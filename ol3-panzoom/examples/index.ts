@@ -7,7 +7,6 @@ export function run() {
     maxextent
     simple
     slider
-    index
     `;
     
     document.writeln(`
