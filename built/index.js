@@ -415,7 +415,7 @@ define("ol3-panzoom/examples/index", ["require", "exports"], function (require, 
             .map(function (v) { return v.trim(); })
             .filter(function (v) { return !!v; })
             .sort()
-            .map(function (lab) { return "<a href=\"" + path + lab + "&debug=1\">" + lab + "</a>"; })
+            .map(function (lab) { return "<a href=\"" + path + lab + "&debug=0\">" + lab + "</a>"; })
             .join("<br/>"));
     }
     exports.run = run;
