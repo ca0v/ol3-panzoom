@@ -11,7 +11,7 @@ The `ol.control.PanZoom` control makes it possible to migrate from OpenLayers
 
 ## Build
 
-* tsd install
+* typings install
 * bower install
 * tsc -w
 
