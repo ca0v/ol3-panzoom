@@ -1,8 +1,16 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define("ol3-panzoom/zoomslidercontrol", ["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
     /**
@@ -11,7 +19,7 @@ define("ol3-panzoom/zoomslidercontrol", ["require", "exports", "openlayers"], fu
      * @extends {ol.control.ZoomSlider}
      * @api
      */
-    var ZoomSlider = (function (_super) {
+    var ZoomSlider = /** @class */ (function (_super) {
         __extends(ZoomSlider, _super);
         function ZoomSlider(opt_options) {
             return _super.call(this, opt_options) || this;
@@ -29,6 +37,7 @@ define("ol3-panzoom/zoomslidercontrol", ["require", "exports", "openlayers"], fu
 });
 define("ol3-panzoom/ol3-panzoom", ["require", "exports", "openlayers", "ol3-panzoom/zoomslidercontrol"], function (require, exports, ol, ZoomSlider) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     /**
      * extends the base object without replacing defined attributes
      */
@@ -47,7 +56,7 @@ define("ol3-panzoom/ol3-panzoom", ["require", "exports", "openlayers", "ol3-panz
         return function () { return element.removeEventListener(event, listener); };
     }
     var DEFAULT_OPTIONS = {};
-    var PanZoom = (function (_super) {
+    var PanZoom = /** @class */ (function (_super) {
         __extends(PanZoom, _super);
         function PanZoom(options) {
             if (options === void 0) { options = DEFAULT_OPTIONS; }
@@ -342,8 +351,9 @@ define("index", ["require", "exports", "ol3-panzoom/ol3-panzoom"], function (req
     "use strict";
     return Panzoom;
 });
-define("ol3-panzoom/examples/black-slider", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_1) {
+define("examples/black-slider", ["require", "exports", "openlayers", "../ol3-panzoom"], function (require, exports, ol, ol3_panzoom_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function run() {
         // Note that the view and control must share the same min/max zoom
         var minZoom = 6;
@@ -376,8 +386,9 @@ define("ol3-panzoom/examples/black-slider", ["require", "exports", "openlayers",
     }
     exports.run = run;
 });
-define("ol3-panzoom/examples/black", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_2) {
+define("examples/black", ["require", "exports", "openlayers", "../ol3-panzoom"], function (require, exports, ol, ol3_panzoom_2) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function run() {
         var panZoom = new ol3_panzoom_2.PanZoom({
             imgPath: './ol3-panzoom/resources/zoombar_black',
@@ -403,8 +414,9 @@ define("ol3-panzoom/examples/black", ["require", "exports", "openlayers", "ol3-p
     }
     exports.run = run;
 });
-define("ol3-panzoom/examples/index", ["require", "exports"], function (require, exports) {
+define("examples/index", ["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function run() {
         var l = window.location;
         var path = "" + l.origin + l.pathname + "?run=ol3-panzoom/examples/";
@@ -421,8 +433,9 @@ define("ol3-panzoom/examples/index", ["require", "exports"], function (require, 
     exports.run = run;
     ;
 });
-define("ol3-panzoom/examples/maxextent", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_3) {
+define("examples/maxextent", ["require", "exports", "openlayers", "../ol3-panzoom"], function (require, exports, ol, ol3_panzoom_3) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function run() {
         // Define a `maxExtent` to include the "zoom to max extent" button
         var panZoom = new ol3_panzoom_3.PanZoom({
@@ -448,8 +461,9 @@ define("ol3-panzoom/examples/maxextent", ["require", "exports", "openlayers", "o
     }
     exports.run = run;
 });
-define("ol3-panzoom/examples/simple", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_4) {
+define("examples/simple", ["require", "exports", "openlayers", "../ol3-panzoom"], function (require, exports, ol, ol3_panzoom_4) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function run() {
         var panZoom = new ol3_panzoom_4.PanZoom();
         var map = new ol.Map({
@@ -473,8 +487,9 @@ define("ol3-panzoom/examples/simple", ["require", "exports", "openlayers", "ol3-
     }
     exports.run = run;
 });
-define("ol3-panzoom/examples/slider", ["require", "exports", "openlayers", "ol3-panzoom/ol3-panzoom"], function (require, exports, ol, ol3_panzoom_5) {
+define("examples/slider", ["require", "exports", "openlayers", "../ol3-panzoom"], function (require, exports, ol, ol3_panzoom_5) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function run() {
         var panZoom = new ol3_panzoom_5.PanZoom({
             slider: true // enables the slider
@@ -502,5 +517,110 @@ define("ol3-panzoom/examples/slider", ["require", "exports", "openlayers", "ol3-
         });
     }
     exports.run = run;
+});
+(function () {
+    function loadCss(url) {
+        var link = document.createElement("link");
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = url;
+        document.getElementsByTagName("head")[0].appendChild(link);
+    }
+    function getParameterByName(name, url) {
+        if (url === void 0) { url = window.location.href; }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+        if (!results)
+            return null;
+        if (!results[2])
+            return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+    var localhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    loadCss("../node_modules/ol3-fun/static/ol/v5.1.3/ol.css");
+    requirejs.config({
+        shim: {
+            // no need to wrap ol in a define method when using a shim
+            // build this using the "npm run build-legacy" (see ol package.json)
+            "openlayers": {
+                deps: [],
+                exports: "ol",
+            }
+        },
+        paths: {
+            "openlayers": localhost ? "../../node_modules/ol3-fun/static/ol/v5.1.3/ol" : "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/build/ol"
+        },
+        packages: [
+            {
+                name: 'jquery',
+                location: localhost ? "../../node_modules/jquery/dist" : 'https://cdn.rawgit.com/jquery/jquery-dist/3.1.1/dist',
+                main: 'jquery.min'
+            }
+        ],
+        deps: ["../examples.max"],
+        callback: function () {
+            requirejs([getParameterByName("run") || "examples/index"], function (test) { test.run(); });
+        }
+    });
+})();
+function loadCss(url) {
+    var link = document.createElement("link");
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = url;
+    document.getElementsByTagName("head")[0].appendChild(link);
+}
+function getParameterByName(name, url) {
+    url = url || window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+    if (!results)
+        return null;
+    if (!results[2])
+        return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+var debug = getParameterByName("debug") === "1";
+var localhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+loadCss(localhost ? "../node_modules/mocha/mocha.css" : "https://cdnjs.cloudflare.com/ajax/libs/mocha/5.2.0/mocha.css");
+loadCss("../node_modules/ol3-fun/static/ol/v5.1.3/ol.css");
+// setup require js packaging system and load the "spec" before running mocha
+requirejs.config({
+    shim: {
+        // no need to wrap ol in a define method when using a shim
+        // build this using the "npm run build-legacy" (see ol package.json)
+        "openlayers": {
+            deps: [],
+            exports: "ol",
+        }
+    },
+    paths: {
+        "openlayers": localhost ? "../../node_modules/ol3-fun/static/ol/v5.1.3/ol" : "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/build/ol"
+    },
+    packages: [
+        {
+            name: 'jquery',
+            location: localhost ? '../../node_modules/jquery' : "https://code.jquery.com",
+            main: localhost ? 'dist/jquery.min' : "jquery-3.3.1.min"
+        },
+        {
+            name: 'mocha',
+            location: localhost ? '../../node_modules/mocha' : "https://cdnjs.cloudflare.com/ajax/libs/mocha/5.2.0",
+            main: localhost ? 'mocha' : "mocha.min"
+        }
+    ],
+    deps: ["../spec/index"],
+    callback: function () {
+        requirejs(["mocha"], function () {
+            var Mocha = window["mocha"];
+            var mocha = Mocha.setup({
+                timeout: 6000,
+                ui: 'bdd',
+                bail: false
+            });
+            // execute "describe" and "it" methods before running mocha
+            requirejs(["tests/index"], function () { return mocha.run(); });
+        });
+    }
 });
 //# sourceMappingURL=index.js.map

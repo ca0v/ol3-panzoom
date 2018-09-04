@@ -2,4 +2,6 @@
 node_modules
 bower_components
 typings
-examples/example-list.js
+*.js
+!built/**
+!loaders/require.js
