@@ -14,33 +14,41 @@
         if (!results)
             return null;
         if (!results[2])
-            return '';
+            return "";
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
     var localhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    loadCss("../node_modules/ol3-fun/static/ol/v5.1.3/ol.css");
+    loadCss(localhost
+        ? "../node_modules/ol3-fun/static/ol/v5.1.3/ol.css"
+        : "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/css/ol.css");
     requirejs.config({
         shim: {
             // no need to wrap ol in a define method when using a shim
             // build this using the "npm run build-legacy" (see ol package.json)
-            "openlayers": {
+            openlayers: {
                 deps: [],
                 exports: "ol"
             }
         },
         paths: {
-            "openlayers": localhost ? "../../node_modules/ol3-fun/static/ol/v5.1.3/ol" : "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/build/ol"
+            openlayers: localhost
+                ? "../../node_modules/ol3-fun/static/ol/v5.1.3/ol"
+                : "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/build/ol"
         },
         packages: [
             {
-                name: 'jquery',
-                location: localhost ? "../../node_modules/jquery/dist" : 'https://cdn.rawgit.com/jquery/jquery-dist/3.1.1/dist',
-                main: 'jquery.min'
-            }
+                name: "jquery",
+                location: localhost
+                    ? "../../node_modules/jquery/dist"
+                    : "https://cdn.rawgit.com/jquery/jquery-dist/3.1.1/dist",
+                main: "jquery.min"
+            },
         ],
         deps: ["../examples.max"],
         callback: function () {
-            requirejs([getParameterByName("run") || "examples/index"], function (test) { test.run(); });
+            requirejs([getParameterByName("run") || "examples/index"], function (test) {
+                test.run();
+            });
         }
     });
 })();
