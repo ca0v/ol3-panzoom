@@ -7,21 +7,19 @@ import ol = require("openlayers");
  * @api
  */
 class ZoomSlider extends ol.control.ZoomSlider {
-  private element: HTMLElement;
+	private element: HTMLElement;
 
-  constructor(opt_options?) {
-    super(opt_options);
-  }
+	constructor(opt_options?: ol.olx.control.ZoomSliderOptions) {
+		super(opt_options);
+	}
 
-
-  /**
-   * @return {Element}
-   * @api
-   */
-  getElement() {
-    return this.element;
-  }
-
+	/**
+	 * @return {Element}
+	 * @api
+	 */
+	getElement() {
+		return this.element;
+	}
 }
 
 export = ZoomSlider;

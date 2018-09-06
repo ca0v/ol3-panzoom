@@ -1,15 +1,12 @@
 {
-    "compilerOptions": {
-        "module": "amd",
-        "target": "es5",
-        "noImplicitAny": false,
-        "sourceMap": true,
-        "declaration": true,
-        "outFile": "./built/index.js"
-    },
-    "exclude": [
-        "node_modules",
-        "bower_components",
-        "built"
-    ]
+	"compilerOptions": {
+		"module": "amd",
+		"target": "es5",
+		"noImplicitAny": false,
+		"sourceMap": true,
+		"declaration": true,
+		"outFile": "./built/index.max.js",
+		"baseUrl": "./node_modules"
+	},
+	"include": ["index.ts"]
 }

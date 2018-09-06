@@ -8,9 +8,10 @@
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		"sourceMap": true,
-		"outFile": "../built/examples.max.js",
+		"outFile": "../built/tests.max.js",
 		"moduleResolution": "classic",
-		"baseUrl": "../node_modules"
+		"baseUrl": "../node_modules",
+		"rootDir": "../"
 	},
 	"include": ["index.ts"]
 }
