@@ -661,7 +661,7 @@ define("examples/black", ["require", "exports", "openlayers", "index"], function
     exports.__esModule = true;
     function run() {
         var panZoom = new index_2.PanZoom({
-            imgPath: "../../ol3-panzoom/resources/zoombar_black",
+            imgPath: "../ol3-panzoom/resources/zoombar_black",
             maxExtent: [813079, 5929220, 848966, 5936863]
         });
         var map = new ol.Map({
