@@ -1,20 +1,9 @@
 /// <reference types="jquery" />
 declare module "ol3-panzoom/zoomslidercontrol" {
     import ol = require("openlayers");
-    /**
-     * @constructor
-     * @param {olx.control.ZoomSliderOptions=} opt_options Options.
-     * @extends {ol.control.ZoomSlider}
-     * @api
-     */
     class ZoomSlider extends ol.control.ZoomSlider {
-        private element;
+        element: HTMLElement;
         constructor(opt_options?: ol.olx.control.ZoomSliderOptions);
-        /**
-         * @return {Element}
-         * @api
-         */
-        getElement(): HTMLElement;
     }
     export = ZoomSlider;
 }
@@ -147,6 +136,7 @@ declare module "ol3-panzoom/ol3-panzoom" {
     export interface IPanZoomOptions extends ol.olx.control.ControlOptions {
         className?: string;
         imgPath?: string;
+        theme?: "ol2img" | "zoombar_black";
         duration?: number;
         maxExtent?: ol.Extent;
         minZoom?: number;
@@ -156,11 +146,8 @@ declare module "ol3-panzoom/ol3-panzoom" {
         zoomDelta?: number;
     }
     export class PanZoom extends ol.control.Control {
-        private imgPath_;
+        redraw(): void;
         private listenerKeys_;
-        private maxExtent_;
-        private maxZoom_;
-        private minZoom_;
         private zoomSliderCtrl_;
         private panEastEl_;
         private panWestEl_;
@@ -170,26 +157,21 @@ declare module "ol3-panzoom/ol3-panzoom" {
         private zoomOutEl_;
         private zoomMaxEl_;
         private zoomDelta_;
-        private slider_;
         private element_;
-        element: HTMLDivElement;
-        private options;
+        private element;
+        options: IPanZoomOptions;
         constructor(options?: IPanZoomOptions);
+        private createUx;
+        private destroyUx;
         setMap(map: ol.Map): void;
-        private createEl_;
+        private createDiv;
+        private imgPath;
         private createButton;
-        private pan_;
-        private zoom_;
-        private zoomByDelta_;
-        /**
-         * @private
-         */
-        adjustZoomSlider_(): void;
-        /**
-         * @private
-         * @return {number}
-         */
-        getSliderSize_(): number;
+        pan(direction: "south" | "west" | "east" | "north", evt?: Event): boolean;
+        zoom(direction: "in" | "out" | "max", evt?: Event): void;
+        private zoomByDelta;
+        private adjustZoomSlider;
+        private getSliderSize;
     }
 }
 declare module "index" {

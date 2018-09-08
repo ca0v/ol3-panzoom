@@ -12,6 +12,7 @@ export type Action = "pan-west" | "pan-south" | "pan-east" | "pan-north" | "zoom
 export interface IPanZoomOptions extends ol.olx.control.ControlOptions {
 	className?: string;
 	imgPath?: string;
+	theme?: "ol2img" | "zoombar_black";
 	duration?: number;
 	maxExtent?: ol.Extent;
 	minZoom?: number;
@@ -22,28 +23,24 @@ export interface IPanZoomOptions extends ol.olx.control.ControlOptions {
 }
 
 const DEFAULT_OPTIONS: IPanZoomOptions = {
-	imgPath: "../ol3-panzoom/resources/ol2img",
+	imgPath: "../ol3-panzoom/resources",
+	theme: "ol2img",
 	className: "ol-panzoom",
 	duration: 500,
 	maxZoom: 19,
 	minZoom: 0,
 	pixelDelta: 128,
 	slider: false,
-	zoomDelta: 1,
+	zoomDelta: 1
 };
 
-const css = `
-.zoombar.black.north.mini {
-
-}
-`;
-
 export class PanZoom extends ol.control.Control {
-	private imgPath_: string;
+	redraw() {
+		let map = this.getMap();
+		this.setMap(null);
+		this.setMap(map);
+	}
 	private listenerKeys_: Array<Function>;
-	private maxExtent_: ol.Extent;
-	private maxZoom_: number;
-	private minZoom_: number;
 	private zoomSliderCtrl_: ZoomSlider;
 	private panEastEl_: HTMLDivElement;
 	private panWestEl_: HTMLDivElement;
@@ -53,30 +50,126 @@ export class PanZoom extends ol.control.Control {
 	private zoomOutEl_: HTMLDivElement;
 	private zoomMaxEl_: HTMLElement;
 	private zoomDelta_: number;
-	private slider_: boolean;
 
 	private element_: HTMLElement; // masks ancestor?
-	element: HTMLDivElement; // masks ancestor?
-	private options: IPanZoomOptions;
+	private element: HTMLDivElement; // masks ancestor?
+	public options: IPanZoomOptions;
 
 	constructor(options = DEFAULT_OPTIONS) {
 		options = defaults({}, options, DEFAULT_OPTIONS);
 		super(options);
 		this.options = options;
 
-		cssin("ol3-panzoom", css);
+		// imgPath locked in after constructor
+		cssin(
+			`ol3-panzoom`,
+			`.ol-panzoom {
+				top: 0.5em;
+				left: 0.5em;
+				background-color: transparent;
+			}
+			.ol-panzoom:hover {
+				background-color: transparent;
+			}
+			.ol-panzoom .action {
+				position:absolute;
+				width:18px;
+				height:18px;
+				cursor:pointer;	
+				background-position: center;
+				background-repeat: no-repeat;
+			}
+			.ol-panzoom .action.pan.west {
+				top: 22px;
+				left: 4px;
+			}
+			.ol-panzoom .action.pan.east {
+				top: 22px;
+				left: 22px;
+			}
+			.ol-panzoom .action.pan.north {
+				top: 4px;
+				left: 13px;
+			}
+			.ol-panzoom .action.pan.south {
+				top: 40px;
+				left: 13px;
+			}
+			.ol-panzoom .action.zoom.in {
+				top: 63px;
+				left: 13px;
+			}
+			.ol-panzoom .action img {
+				width:18px;
+				height:18px;
+				vertical-align:top;
+			}
+			.ol-panzoom .ol-zoomslider {
+				border:0;
+				borderRadius:0;
+				left :13px;
+				padding:0;
+				top:81px;
+				width:18px";
+			}
+			.ol-panzoom .ol-zoomslider .ol-zoomslider-thumb {
+				border:none;
+				height:9px;
+				margin:0 -1px;
+				width:20px;
+			}
+			.ol-panzoom .action.zoom.out {
+				top: ${this.options.slider ? this.getSliderSize() + 81 : this.options.maxExtent ? 99 : 81}px;
+				left: 13px;
+			}
+			.ol-panzoom .action.zoom.max {
+				top:81px;
+				left:13px;
+			}
+			`
+		);
 
-		this.imgPath_ = options.imgPath || "./ol3-panzoom/resources/ol2img";
+		["ol2img", "zoombar_black"].forEach(theme =>
+			cssin(
+				`ol2-popup-${theme}`,
+				`.ol-panzoom.${theme} .action.pan.north {
+			background-image:url(${this.options.imgPath}/${theme}/north-mini.png);
+		}
+		.ol-panzoom.${theme} .action.pan.south {
+			background-image:url(${this.options.imgPath}/${theme}/south-mini.png);
+		}
+		.ol-panzoom.${theme} .action.pan.west {
+			background-image:url(${this.options.imgPath}/${theme}/west-mini.png);
+		}
+		.ol-panzoom.${theme} .action.pan.east {
+			background-image:url(${this.options.imgPath}/${theme}/east-mini.png);
+		}
+		.ol-panzoom.${theme} .action.zoom.in {
+			background-image:url(${this.options.imgPath}/${theme}/zoom-plus-mini.png);
+		}
+		.ol-panzoom.${theme} .action.zoom.out {
+			background-image:url(${this.options.imgPath}/${theme}/zoom-minus-mini.png);
+		}
+		.ol-panzoom.${theme} .action.zoom.max {
+			background-image:url(${this.options.imgPath}/${theme}/zoom-world-mini.png);
+		}
+		.ol-panzoom.${theme} .ol-zoomslider {
+			background: url(${this.options.imgPath}/${theme}/zoombar.png);
+		}
+		.ol-panzoom.${theme} .ol-zoomslider .ol-zoomslider-thumb {
+			background:url(${this.options.imgPath}/${theme}/slider.png);
+		}
+`
+			)
+		);
+		this.createUx();
+	}
 
-		var element = (this.element = this.element_ = this.createEl_());
+	private createUx() {
+		let options = this.options;
+		let element = (this.element = this.element_ = this.createDiv());
 		this.setTarget(options.target);
-
 		this.listenerKeys_ = [];
-
-		this.maxExtent_ = options.maxExtent ? options.maxExtent : null;
-		this.maxZoom_ = options.maxZoom ? options.maxZoom : 19;
-		this.minZoom_ = options.minZoom ? options.minZoom : 0;
-		this.slider_ = options.slider !== undefined ? options.slider : false;
 		this.zoomDelta_ = options.zoomDelta !== undefined ? options.zoomDelta : 1;
 		this.panEastEl_ = this.createButton("pan-east");
 		this.panNorthEl_ = this.createButton("pan-north");
@@ -84,170 +177,96 @@ export class PanZoom extends ol.control.Control {
 		this.panWestEl_ = this.createButton("pan-west");
 		this.zoomInEl_ = this.createButton("zoom-in");
 		this.zoomOutEl_ = this.createButton("zoom-out");
-		this.zoomMaxEl_ = !this.slider_ && this.maxExtent_ ? this.createButton("zoom-max") : null;
-		this.zoomSliderCtrl_ = this.slider_ ? new ZoomSlider() : null;
-
+		this.zoomMaxEl_ = !this.options.slider && this.options.maxExtent ? this.createButton("zoom-max") : null;
+		this.zoomSliderCtrl_ = this.options.slider ? new ZoomSlider() : null;
 		element.appendChild(this.panNorthEl_);
 		element.appendChild(this.panWestEl_);
 		element.appendChild(this.panEastEl_);
 		element.appendChild(this.panSouthEl_);
 		element.appendChild(this.zoomInEl_);
 		element.appendChild(this.zoomOutEl_);
-
 		if (this.zoomMaxEl_) {
 			element.appendChild(this.zoomMaxEl_);
 		}
 	}
 
-	setMap(map: ol.Map) {
-		var keys = this.listenerKeys_;
-		var zoomSlider = this.zoomSliderCtrl_;
+	private destroyUx() {
+		let keys = this.listenerKeys_;
+		let zoomSlider = this.zoomSliderCtrl_;
+		let currentMap = this.getMap();
+		this.element.remove();
 
-		var currentMap = this.getMap();
 		if (currentMap && currentMap instanceof ol.Map) {
 			keys.forEach(k => k());
 			keys.length = 0;
-			if (this.zoomSliderCtrl_) {
-				this.zoomSliderCtrl_.setTarget(null);
-				window.setTimeout(function() {
-					currentMap.removeControl(zoomSlider);
-				}, 0);
-			}
-		}
-
-		super.setMap(map);
-
-		if (map) {
-			keys.push(on(this.panEastEl_, "click", evt => this.pan_("east", evt)));
-			keys.push(on(this.panNorthEl_, "click", evt => this.pan_("north", evt)));
-			keys.push(on(this.panSouthEl_, "click", evt => this.pan_("south", evt)));
-			keys.push(on(this.panWestEl_, "click", evt => this.pan_("west", evt)));
-
-			keys.push(on(this.zoomInEl_, "click", evt => this.zoom_("in", evt)));
-			keys.push(on(this.zoomOutEl_, "click", evt => this.zoom_("out", evt)));
-
-			if (this.maxExtent_ && !this.slider_) {
-				keys.push(on(this.zoomMaxEl_, "click", evt => this.zoom_("max", evt)));
-			}
-
-			if (this.slider_) {
-				zoomSlider.setTarget(this.element_);
-				window.setTimeout(function() {
-					map.addControl(zoomSlider);
-				}, 0);
-				this.adjustZoomSlider_();
+			if (zoomSlider) {
+				zoomSlider.element.remove();
+				zoomSlider.setTarget(null);
+				currentMap.removeControl(zoomSlider);
 			}
 		}
 	}
 
-	private createEl_() {
-		var path = this.imgPath_;
-		var cssClasses = [this.options.className, "ol-unselectable"];
+	setMap(map: ol.Map) {
+		this.destroyUx();
+		this.createUx();
+		super.setMap(map);
 
-		if (!path) {
-			cssClasses.push("ol-control");
+		if (map) {
+			let keys = this.listenerKeys_;
+
+			keys.push(on(this.panEastEl_, "click", evt => this.pan("east", evt)));
+			keys.push(on(this.panNorthEl_, "click", evt => this.pan("north", evt)));
+			keys.push(on(this.panSouthEl_, "click", evt => this.pan("south", evt)));
+			keys.push(on(this.panWestEl_, "click", evt => this.pan("west", evt)));
+
+			keys.push(on(this.zoomInEl_, "click", evt => this.zoom("in", evt)));
+			keys.push(on(this.zoomOutEl_, "click", evt => this.zoom("out", evt)));
+
+			if (this.options.maxExtent && !this.options.slider) {
+				keys.push(on(this.zoomMaxEl_, "click", evt => this.zoom("max", evt)));
+			}
+
+			if (this.options.slider) {
+				map.once("postrender", () => {
+					let zoomSlider = this.zoomSliderCtrl_;
+					zoomSlider.setTarget(this.element_);
+					map.addControl(zoomSlider);
+					this.adjustZoomSlider();
+				});
+			}
 		}
+	}
 
-		var element = document.createElement("div");
+	private createDiv() {
+		var cssClasses = [this.options.className, "ol-unselectable", "ol-control", this.options.theme];
+		let element = document.createElement("div");
 		element.className = cssClasses.join(" ");
 
-		if (path) {
-			element.style.left = "4px";
-			element.style.position = "absolute";
-			element.style.top = "4px";
-		}
-
 		return element;
+	}
+	private imgPath(): string {
+		return `${this.options.imgPath}/${this.options.theme}`;
 	}
 
 	private createButton(action: Action) {
 		var divEl = document.createElement("div");
-		divEl.className = action;
+		divEl.className = `action ${action.split("-").join(" ")}`;
 
-		var path = this.imgPath_;
-		var maxExtent = this.maxExtent_;
-		var slider = this.slider_;
-
-		if (path) {
-			divEl.style.width = "18px";
-			divEl.style.height = "18px";
-			divEl.style.position = "absolute";
-			divEl.style.cursor = "pointer";
-
-			var imgEl = document.createElement("img");
-			imgEl.style.width = "18px";
-			imgEl.style.height = "18px";
-			imgEl.style.verticalAlign = "top";
-
-			switch (action) {
-				case "pan-east":
-					imgEl.id = "OpenLayers_Control_PanZoom_panright_innerImage";
-					imgEl.src = [path, "east-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_panright";
-					divEl.style.top = "22px";
-					divEl.style.left = "22px";
-					break;
-				case "pan-north":
-					imgEl.id = "OpenLayers_Control_PanZoom_panup_innerImage";
-					imgEl.src = [path, "north-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_panup";
-					divEl.style.top = "4px";
-					divEl.style.left = "13px";
-					break;
-				case "pan-south":
-					imgEl.id = "OpenLayers_Control_PanZoom_pandown_innerImage";
-					imgEl.src = [path, "south-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_pandown";
-					divEl.style.top = "40px";
-					divEl.style.left = "13px";
-					break;
-				case "pan-west":
-					imgEl.id = "OpenLayers_Control_PanZoom_panleft_innerImage";
-					imgEl.src = [path, "west-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_panleft";
-					divEl.style.top = "22px";
-					divEl.style.left = "4px";
-					break;
-				case "zoom-in":
-					imgEl.id = "OpenLayers_Control_PanZoom_zoomin_innerImage";
-					imgEl.src = [path, "zoom-plus-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_zoomin";
-					divEl.style.top = "63px";
-					divEl.style.left = "13px";
-					break;
-				case "zoom-out":
-					imgEl.id = "OpenLayers_Control_PanZoom_zoomout_innerImage";
-					imgEl.src = [path, "zoom-minus-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_zoomout";
-					if (slider) {
-						divEl.style.top = [this.getSliderSize_() + 81, "px"].join("");
-					} else if (maxExtent) {
-						divEl.style.top = "99px";
-					} else {
-						divEl.style.top = "81px";
-					}
-					divEl.style.left = "13px";
-					break;
-				case "zoom-max":
-					imgEl.id = "OpenLayers_Control_PanZoom_zoomworld_innerImage";
-					imgEl.src = [path, "zoom-world-mini.png"].join("/");
-					divEl.id = "OpenLayers_Control_PanZoom_zoomworld";
-					divEl.style.top = "81px";
-					divEl.style.left = "13px";
-					break;
-			}
-			divEl.appendChild(imgEl);
+		switch (action) {
+			case "zoom-out":
+				divEl.style.top =
+					(this.options.slider ? this.getSliderSize() + 81 : this.options.maxExtent ? 99 : 81) + "px";
+				break;
 		}
 
 		return divEl;
 	}
 
-	private pan_(direction: "south" | "west" | "east" | "north", evt: Event) {
-		var stopEvent = false;
-
-		var map = this.getMap();
+	public pan(direction: "south" | "west" | "east" | "north", evt?: Event) {
+		let map = this.getMap();
 		console.assert(!!map, "map must be set");
-		var view = map.getView();
+		let view = map.getView();
 		console.assert(!!view, "map must have view");
 		let mapUnitsDelta = view.getResolution() * this.options.pixelDelta;
 		let delta: ol.Coordinate = [0, 0];
@@ -275,32 +294,37 @@ export class PanZoom extends ol.control.Control {
 
 		view.animate({
 			center: center,
-			duration: this.options.duration,
+			duration: this.options.duration
 		});
 
-		evt.preventDefault();
-		stopEvent = true;
-
-		return !stopEvent;
+		evt && evt.preventDefault();
+		return !evt;
 	}
 
-	private zoom_(direction: "in" | "out" | "max", evt: Event) {
-		if (direction === "in") {
-			this.zoomByDelta_(this.zoomDelta_);
-		} else if (direction === "out") {
-			this.zoomByDelta_(-this.zoomDelta_);
-		} else if (direction === "max") {
-			var map = this.getMap();
-			var view = map.getView();
-			var extent = !this.maxExtent_ ? view.getProjection().getExtent() : this.maxExtent_;
-			view.fit(extent, {
-				duration: this.options.duration,
-			});
+	public zoom(direction: "in" | "out" | "max", evt?: Event) {
+		switch (direction) {
+			case "in":
+				this.zoomByDelta(this.zoomDelta_);
+				break;
+			case "out":
+				this.zoomByDelta(-this.zoomDelta_);
+				break;
+			case "max":
+				{
+					let view = this.getMap().getView();
+					var extent = this.options.maxExtent || view.getProjection().getExtent();
+					view.fit(extent, {
+						duration: this.options.duration
+					});
+				}
+				break;
+			default:
+				throw `unknown direction: ${direction}`;
 		}
-		evt.preventDefault();
+		evt && evt.preventDefault();
 	}
 
-	private zoomByDelta_(delta: number) {
+	private zoomByDelta(delta: number) {
 		var map = this.getMap();
 		var view = map.getView();
 		if (!view) {
@@ -313,50 +337,26 @@ export class PanZoom extends ol.control.Control {
 			var newResolution = view.constrainResolution(currentResolution, delta);
 			view.animate({
 				resolution: newResolution,
-				duration: this.options.duration,
+				duration: this.options.duration
 			});
 		}
 	}
 
-	/**
-	 * @private
-	 */
-	adjustZoomSlider_() {
+	private adjustZoomSlider() {
 		var zoomSlider = this.zoomSliderCtrl_;
-		var path = this.imgPath_;
+		var path = this.imgPath();
 
 		if (!zoomSlider || !path) {
 			return;
 		}
 
-		var height = [this.getSliderSize_(), "px"].join("");
-
 		// bar
-		var zoomSliderEl = zoomSlider.getElement();
-		zoomSliderEl.style.background = ["url(", path, "/", "zoombar.png", ")"].join("");
-		zoomSliderEl.style.border = "0";
-		zoomSliderEl.style.borderRadius = "0";
-		zoomSliderEl.style.height = height;
-		zoomSliderEl.style.left = "13px";
-		zoomSliderEl.style.padding = "0";
-		zoomSliderEl.style.top = "81px";
-		zoomSliderEl.style.width = "18px";
-
-		// slider
-		var sliderEl = <HTMLElement>zoomSliderEl.children[0];
-		console.assert(sliderEl instanceof Element);
-		sliderEl.style.background = ["url(", path, "/", "slider.png", ")"].join("");
-		sliderEl.style.border = "none";
-		sliderEl.style.height = "9px";
-		sliderEl.style.margin = "0 -1px";
-		sliderEl.style.width = "20px";
+		let zoomSliderEl = zoomSlider.element;
+		zoomSliderEl.classList.add(this.options.theme);
+		zoomSliderEl.style.height = `${this.getSliderSize()}px`;
 	}
 
-	/**
-	 * @private
-	 * @return {number}
-	 */
-	getSliderSize_() {
-		return (this.maxZoom_ - this.minZoom_ + 1) * 11;
+	private getSliderSize() {
+		return (this.options.maxZoom - this.options.minZoom + 1) * 11;
 	}
 }
