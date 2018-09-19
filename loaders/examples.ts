@@ -1,5 +1,3 @@
-declare var requirejs;
-
 (function() {
 	function loadCss(url) {
 		let link = document.createElement("link");
@@ -23,7 +21,7 @@ declare var requirejs;
 	loadCss(
 		localhost
 			? "../node_modules/ol3-fun/static/ol/v5.1.3/ol.css"
-			: "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/css/ol.css",
+			: "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/css/ol.css"
 	);
 
 	requirejs.config({
@@ -32,14 +30,14 @@ declare var requirejs;
 			// build this using the "npm run build-legacy" (see ol package.json)
 			openlayers: {
 				deps: [], // no dependencies, needs path to indicate where to find "openlayers"
-				exports: "ol", // tell requirejs which global this library defines
-			},
+				exports: "ol" // tell requirejs which global this library defines
+			}
 		},
 
 		paths: {
 			openlayers: localhost
 				? "../../node_modules/ol3-fun/static/ol/v5.1.3/ol"
-				: "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/build/ol",
+				: "https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.1.3/build/ol"
 		},
 
 		packages: [
@@ -48,8 +46,8 @@ declare var requirejs;
 				location: localhost
 					? "../../node_modules/jquery/dist"
 					: "https://cdn.rawgit.com/jquery/jquery-dist/3.1.1/dist",
-				main: "jquery.min",
-			},
+				main: "jquery.min"
+			}
 		],
 
 		deps: ["../examples.max"],
@@ -58,6 +56,6 @@ declare var requirejs;
 			requirejs([getParameterByName("run") || "examples/index"], function(test) {
 				test.run();
 			});
-		},
+		}
 	});
 })();

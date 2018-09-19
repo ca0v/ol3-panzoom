@@ -5,6 +5,7 @@
 	"main": "built/index.js",
 	"scripts": {
 		"ol": "pushd ./node_modules/ol && npm install && npm run build-legacy && popd",
+		"update": "npm install ol3-fun",
 		"clean": "rm -r ./built",
 		"before-push": "npm run clean && npm run build && npm run test && start npm run live-for-tests && npm run live-for-examples",
 		"build-for-amd": "tsc -p tsconfig.json",
@@ -33,10 +34,10 @@
 	},
 	"homepage": "https://github.com/ca0v/ol3-panzoom/blob/v5.1.3/README.md",
 	"dependencies": {
-		"@types/jquery": "^3.3.6",
+		"@types/jquery": "^3.3.9",
 		"@types/ol": "^4.6.2",
-		"typescript": "^3.0.1",
-		"ol3-fun": "https://github.com/ca0v/ol3-fun/tarball/v5.1.3"
+		"ol3-fun": "https://github.com/ca0v/ol3-fun/tarball/v5.1.3",
+		"typescript": "^3.0.1"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.5",

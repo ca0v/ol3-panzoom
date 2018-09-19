@@ -2,11 +2,14 @@
 	"compilerOptions": {
 		"module": "amd",
 		"target": "es5",
-		"noImplicitAny": false,
+		"strict": true,
 		"sourceMap": true,
 		"declaration": true,
 		"outFile": "./built/index.max.js",
-		"baseUrl": "./node_modules"
+		"moduleResolution": "classic",
+		"baseUrl": "./node_modules",
+		"lib": ["esnext", "dom"],
+		"types": ["openlayers"]
 	},
 	"include": ["index.ts"]
 }

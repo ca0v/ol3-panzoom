@@ -1,17 +1,10 @@
 {
+	"extends": "../tsconfig",
 	"compilerOptions": {
-		"removeComments": true,
+		"strict": false,
 		"declaration": false,
-		"module": "amd",
-		"target": "es3",
-		"noImplicitAny": true,
-		"noImplicitReturns": true,
-		"noImplicitThis": true,
-		"sourceMap": true,
 		"outFile": "../built/tests.max.js",
-		"moduleResolution": "classic",
-		"baseUrl": "../node_modules",
-		"rootDir": "../"
+		"types": ["openlayers"]
 	},
-	"include": ["index.ts"]
+	"include": ["index.ts", "**/*.ts"]
 }

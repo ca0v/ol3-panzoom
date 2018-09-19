@@ -3,7 +3,7 @@ import { MapMaker } from "./utils/MapMaker";
 
 export function run() {
 	MapMaker(
-		new PanZoom({
+		PanZoom.create({
 			imgPath: "../ol3-panzoom/resources/zoombar_black",
 			minZoom: 6,
 			maxZoom: 15,

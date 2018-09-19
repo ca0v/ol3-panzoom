@@ -1,5 +1,3 @@
-declare var requirejs: any;
-
 function loadCss(url: string) {
 	let link = document.createElement("link");
 	link.type = "text/css";
